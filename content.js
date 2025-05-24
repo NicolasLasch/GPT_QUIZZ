@@ -153,15 +153,8 @@ class QCMExtractor {
         if (!text || text.length < 500) {
             text = this.getAllTextContent(lastMessage);
         }
+
         
-        console.log('=== FULL MESSAGE CONTENT ===');
-        console.log('Method used, text length:', text.length);
-        console.log('First 500 chars:', text.substring(0, 500));
-        console.log('Last 200 chars:', text.slice(-200));
-        console.log('Contains "Intelligence":', text.includes('Intelligence'));
-        console.log('Contains "D)":', text.includes('D)'));
-        
-        // Reset the processed message ID to force reprocessing
         this.lastProcessedMessageId = null;
         
         this.questions = this.parseQuestions(text);
@@ -244,7 +237,6 @@ class QCMExtractor {
     parseQuestions(text) {
         const questions = [];
         
-        // Updated regex: no more bold markers
         const questionPattern = /(\d+)\.\s*([^\n]+?)\n((?:[A-Z]\)[^\n]*\n?)+)/g;
         let match;
 
@@ -346,7 +338,7 @@ class QCMExtractor {
         });
 
         html += `</div><div class="qcm-footer">
-            <button id="submit-answers">Submit Answers</button>
+            <button id="submit-answers">Copy Answers to clipboard</button>
         </div>`;
 
         return html;
@@ -373,22 +365,29 @@ class QCMExtractor {
     submitAnswers() {
         const checkboxes = document.querySelectorAll('#qcm-panel input:checked');
         const answers = {};
-        
+
         checkboxes.forEach(cb => {
             const qId = cb.dataset.question;
             const option = cb.dataset.option;
             if (!answers[qId]) answers[qId] = [];
             answers[qId].push(option);
         });
-        
+
+        const sortedKeys = Object.keys(answers).sort((a, b) => Number(a) - Number(b));
+
         let output = '';
-        Object.keys(answers).forEach(qId => {
-            output += `Answer Question ${qId}: ${answers[qId].join(' & ')}\n`;
+        sortedKeys.forEach(qId => {
+            output += `Answer ${qId} : ${answers[qId].join('&')}\n`;
         });
-        
+
         if (output) {
+            navigator.clipboard.writeText(output.trim())
+                .then(() => console.log('Answers copied to clipboard.'))
+                .catch(err => console.warn('Clipboard copy failed:', err));
             this.insertIntoChat(output.trim());
-            document.getElementById('qcm-panel').remove();
+            document.getElementById('qcm-panel')?.remove();
+        } else {
+            alert('❌ No answers selected.');
         }
     }
 
