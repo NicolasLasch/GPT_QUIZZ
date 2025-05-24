@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            width: 300px;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .step {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .step strong {
+            color: #667eea;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status.active {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        .status.inactive {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">📝 QCM Assistant</div>
+        <div class="subtitle">Extract & Answer QCM from ChatGPT</div>
+    </div>
+    
+    <div class="instructions">
+        <div class="step"><strong>1.</strong> Go to ChatGPT</div>
+        <div class="step"><strong>2.</strong> Ask for a QCM/quiz</div>
+        <div class="step"><strong>3.</strong> Click the floating QCM button</div>
+        <div class="step"><strong>4.</strong> Select answers and submit</div>
+    </div>
+    
+    <div id="status" class="status inactive">
+        Open ChatGPT to use extension
+    </div>
+
+    <script>
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            const tab = tabs[0];
+            const status = document.getElementById('status');
+            
+            if (tab.url.includes('chat.openai.com') || tab.url.includes('chatgpt.com')) {
+                status.className = 'status active';
+                status.textContent = 'Extension Active on ChatGPT';
+            } else {
+                status.className = 'status inactive';
+                status.textContent = 'Navigate to ChatGPT to activate';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "QCM Assistant",
+  "version": "1.0",
+  "description": "Extract QCM questions from ChatGPT and submit answers",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://chat.openai.com/*", "*://chatgpt.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "QCM Assistant"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "64": "icon64.png",
+    "128": "icon128.png"
+  }
+}
